@@ -138,7 +138,8 @@ function Field({
 
 export default function TeacherRegisterPage() {
   const router = useRouter();
-  const [selectedSchoolLevel, setSelectedSchoolLevel] = useState<keyof typeof subjectOptionsByLevel>("SMA");
+  const [selectedSchoolLevel, setSelectedSchoolLevel] =
+    useState<keyof typeof subjectOptionsByLevel>("SMA");
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
@@ -216,7 +217,7 @@ export default function TeacherRegisterPage() {
       </div>
 
       {step === 1 && (
-        <div className="flex-1 space-y-[20px] px-[24px] pt-[24px]">
+        <div className="flex-1 space-y-[16px] px-[24px] pt-[24px]">
           <fieldset className="border-0 p-0">
             <legend className="mb-[8px] block text-[15px] font-medium">
               Jenjang yang diajar
@@ -228,7 +229,9 @@ export default function TeacherRegisterPage() {
                   label={item}
                   checked={selectedSchoolLevel === item}
                   onClick={() =>
-                    setSelectedSchoolLevel(item as keyof typeof subjectOptionsByLevel)
+                    setSelectedSchoolLevel(
+                      item as keyof typeof subjectOptionsByLevel,
+                    )
                   }
                   type="radio"
                 />
@@ -319,7 +322,7 @@ export default function TeacherRegisterPage() {
         </div>
       )}
 
-      <div className="mt-auto border-t border-[#E3E8EF] bg-[#FAF7F2] px-[24px] pb-[24px] pt-[16px]">
+      <div className="mt-[16px] border-t border-[#E3E8EF] bg-[#FAF7F2] px-[24px] pb-[24px] pt-[16px]">
         {step < 3 ? (
           <button
             type="button"
