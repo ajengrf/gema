@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { siteConfig } from "@/site.config";
 
+const subjectOptionsByLevel = {
+  SMP: ["Matematika", "IPA", "IPS", "Bahasa Inggris"],
+  SMA: ["Matematika", "Fisika", "Kimia", "Biologi", "Pemrograman (Online)"],
+};
 const schoolLevels = ["SMP", "SMA"];
-const teacherSubjects = ["Matematika", "Fisika", "Kimia", "Biologi"];
 const teacherWeekdays = [
   "Senin",
   "Selasa",
@@ -16,7 +19,19 @@ const teacherWeekdays = [
   "Sabtu",
   "Minggu",
 ];
-const teacherTimes = ["13.00", "15.00", "17.00", "19.00"];
+const teacherTimes = [
+  "09.00",
+  "10.00",
+  "11.00",
+  "12.00",
+  "13.00",
+  "14.00",
+  "15.00",
+  "16.00",
+  "17.00",
+  "18.00",
+  "19.00",
+];
 
 const chipBase =
   "relative inline-flex items-center justify-center rounded-full border text-base font-medium transition-all";
@@ -123,11 +138,19 @@ function Field({
 
 export default function TeacherRegisterPage() {
   const router = useRouter();
-  const [selectedSchoolLevel, setSelectedSchoolLevel] = useState<string>("SMA");
+  const [selectedSchoolLevel, setSelectedSchoolLevel] = useState<keyof typeof subjectOptionsByLevel>("SMA");
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
   const [step, setStep] = useState<1 | 2 | 3>(1);
+
+  useEffect(() => {
+    setSelectedSubjects((prev) =>
+      prev.filter((subject) =>
+        subjectOptionsByLevel[selectedSchoolLevel].includes(subject),
+      ),
+    );
+  }, [selectedSchoolLevel]);
 
   const handleBack = () => {
     if (step > 1) {
@@ -157,7 +180,7 @@ export default function TeacherRegisterPage() {
 
   return (
     <main className="min-h-screen bg-[#FAF7F2] text-[#1B2430]">
-      <header className="flex h-[64px] items-center gap-[6px] bg-[#1E3A5F] px-[12px] text-[#FAF7F2]">
+      <header className="sticky top-0 z-10 flex h-[64px] items-center gap-[6px] bg-[#1E3A5F] px-[12px] text-[#FAF7F2] shadow-sm">
         <button
           type="button"
           onClick={handleBack}
@@ -204,7 +227,9 @@ export default function TeacherRegisterPage() {
                   key={item}
                   label={item}
                   checked={selectedSchoolLevel === item}
-                  onClick={() => setSelectedSchoolLevel(item)}
+                  onClick={() =>
+                    setSelectedSchoolLevel(item as keyof typeof subjectOptionsByLevel)
+                  }
                   type="radio"
                 />
               ))}
@@ -219,7 +244,7 @@ export default function TeacherRegisterPage() {
               Boleh pilih lebih dari satu
             </div>
             <div className="flex flex-wrap gap-[10px]">
-              {teacherSubjects.map((subject) => (
+              {subjectOptionsByLevel[selectedSchoolLevel].map((subject) => (
                 <ToggleChip
                   key={subject}
                   label={subject}

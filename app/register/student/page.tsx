@@ -2,10 +2,20 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { siteConfig } from "@/site.config";
 
-const subjectOptions = ["Matematika", "Fisika", "Kimia", "Biologi"];
+const subjectOptionsByLevel = {
+  SMP: ["Matematika", "IPA", "IPS", "Bahasa Inggris", "Lainnya"],
+  SMA: [
+    "Matematika",
+    "Fisika",
+    "Kimia",
+    "Biologi",
+    "Pemrograman (Online)",
+    "Lainnya",
+  ],
+};
 const schoolLevels = ["SMP", "SMA"];
 const weekdays = [
   "Senin",
@@ -16,7 +26,19 @@ const weekdays = [
   "Sabtu",
   "Minggu",
 ];
-const times = ["13.00", "15.00", "17.00", "19.00"];
+const times = [
+  "09.00",
+  "10.00",
+  "11.00",
+  "12.00",
+  "13.00",
+  "14.00",
+  "15.00",
+  "16.00",
+  "17.00",
+  "18.00",
+  "19.00",
+];
 
 const chipBase =
   "relative inline-flex items-center justify-center rounded-full border text-base font-medium transition-all";
@@ -128,7 +150,8 @@ function Field({
 
 export default function StudentRegisterPage() {
   const router = useRouter();
-  const [selectedSchoolLevel, setSelectedSchoolLevel] = useState<string>("SMA");
+  const [selectedSchoolLevel, setSelectedSchoolLevel] =
+    useState<keyof typeof subjectOptionsByLevel>("SMA");
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
@@ -136,6 +159,14 @@ export default function StudentRegisterPage() {
     "Tidak ada preferensi",
   );
   const [step, setStep] = useState<1 | 2 | 3>(1);
+
+  useEffect(() => {
+    setSelectedSubjects((prev) =>
+      prev.filter((subject) =>
+        subjectOptionsByLevel[selectedSchoolLevel].includes(subject),
+      ),
+    );
+  }, [selectedSchoolLevel]);
 
   const handleBack = () => {
     if (step > 1) {
@@ -179,7 +210,7 @@ export default function StudentRegisterPage() {
 
   return (
     <main className="min-h-screen bg-[#FAF7F2] text-[#1B2430]">
-      <header className="flex h-[64px] items-center gap-[6px] bg-[#1E3A5F] px-[12px] text-[#FAF7F2]">
+      <header className="sticky top-0 z-10 flex h-[64px] items-center gap-[6px] bg-[#1E3A5F] px-[12px] text-[#FAF7F2] shadow-sm">
         <button
           type="button"
           onClick={handleBack}
@@ -208,8 +239,8 @@ export default function StudentRegisterPage() {
 
       {step === 1 && (
         <div className="px-[24px] pt-[20px]">
-          <div className="rounded-[12px] bg-[#D6E4F0] px-[16px] py-[12px] text-center">
-            <div className="flex items-baseline justify-center gap-[6px]">
+          <div className="rounded-[12px] bg-[#D6E4F0] px-[16px] py-[12px]">
+            <div className="flex items-baseline gap-[6px]">
               <span className="text-[14px] text-[#1B2430]">
                 Biaya mulai dari
               </span>
@@ -232,7 +263,11 @@ export default function StudentRegisterPage() {
                   key={item}
                   label={item}
                   checked={selectedSchoolLevel === item}
-                  onClick={() => setSelectedSchoolLevel(item)}
+                  onClick={() =>
+                    setSelectedSchoolLevel(
+                      item as keyof typeof subjectOptionsByLevel,
+                    )
+                  }
                   type="radio"
                 />
               ))}
@@ -247,7 +282,7 @@ export default function StudentRegisterPage() {
               Boleh pilih lebih dari satu
             </div>
             <div className="flex flex-wrap gap-[10px]">
-              {subjectOptions.map((item) => (
+              {subjectOptionsByLevel[selectedSchoolLevel].map((item) => (
                 <ToggleChip
                   key={item}
                   label={item}
@@ -354,7 +389,7 @@ export default function StudentRegisterPage() {
         </div>
       )}
 
-      <div className="mt-auto border-t border-[#E3E8EF] bg-[#FAF7F2] px-[24px] pb-[24px] pt-[16px]">
+      <div className="mt-[24px] border-t border-[#E3E8EF] bg-[#FAF7F2] px-[24px] pb-[24px] pt-[16px]">
         {step < 3 ? (
           <button
             type="button"

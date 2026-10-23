@@ -36,27 +36,18 @@ export default function HomePage() {
               <GemaMark />
             </div>
             <div>
-              <div className="text-[28px] font-extrabold leading-none">gema</div>
+              <div className="text-[28px] font-extrabold leading-none">
+                GEMA
+              </div>
               <div className="mt-[2px] text-[9px] font-bold tracking-[2px] text-[#F2B632]">
                 GURU KE RUMAH
               </div>
             </div>
           </div>
-
-          <Link
-            href="/register"
-            className="rounded-full border border-[#D6E4F0] bg-white px-[16px] py-[10px] text-[13px] font-bold text-[#1E3A5F]"
-          >
-            Daftar
-          </Link>
         </header>
 
-        <section className="mt-[28px] overflow-hidden rounded-[28px] bg-[#1E3A5F] p-[22px] text-[#FAF7F2] shadow-[0_18px_42px_rgba(30,58,95,0.18)]">
-          <div className="inline-flex rounded-full bg-[#F4D77B] px-[10px] py-[6px] text-[11px] font-bold text-[#1E3A5F]">
-            Pilihan paling cocok untuk belajar di rumah
-          </div>
-
-          <h1 className="mt-[18px] text-[34px] font-extrabold leading-[1.08] tracking-[-0.03em]">
+        <section className="mt-[42px] overflow-hidden rounded-[28px] bg-[#1E3A5F] p-[22px] text-[#FAF7F2] shadow-[0_18px_42px_rgba(30,58,95,0.18)]">
+          <h1 className="text-[34px] font-extrabold leading-[1.08] tracking-[-0.03em]">
             Cari guru les pribadi yang tepat untukmu.
           </h1>
 
@@ -70,18 +61,18 @@ export default function HomePage() {
               href="/register"
               className="flex-1 rounded-full bg-[#F2B632] px-[18px] py-[15px] text-center text-[15px] font-extrabold text-[#1E3A5F]"
             >
-              Daftar sekarang
+              Daftar Sekarang
             </Link>
           </div>
 
           <div className="mt-[22px] rounded-[18px] bg-[#FAF7F2] p-[16px] text-[#1E3A5F]">
-            <div className="flex items-center justify-between gap-[8px]">
+            <div className="flex items-center gap-[8px]">
               <span className="text-[14px] font-medium">Biaya mulai dari</span>
               <span className="text-[24px] font-extrabold leading-none">
                 {siteConfig.priceLabel}
               </span>
             </div>
-            <div className="mt-[4px] text-[13px] font-medium text-[#4A5568]">
+            <div className="mt-[2px] text-[13px] font-medium text-[#4A5568]">
               per pertemuan
             </div>
           </div>
@@ -89,9 +80,18 @@ export default function HomePage() {
 
         <section className="mt-[24px] grid gap-[12px]">
           {[
-            { title: "Guru berkualitas", body: "Dipilih sesuai kebutuhan dan jenjang belajar." },
-            { title: "Jadwal fleksibel", body: "Pilih hari dan jam yang paling cocok untuk kamu." },
-            { title: "Proses mudah", body: "Daftar cepat, hubungi guru, dan mulai belajar." },
+            {
+              title: "Guru berkualitas",
+              body: "Dipilih sesuai kebutuhan dan jenjang belajar.",
+            },
+            {
+              title: "Jadwal fleksibel",
+              body: "Pilih hari dan jam yang paling cocok untuk kamu.",
+            },
+            {
+              title: "Proses mudah",
+              body: "Daftar cepat, hubungi guru, dan mulai belajar.",
+            },
           ].map((item) => (
             <div
               key={item.title}
@@ -119,8 +119,36 @@ export default function HomePage() {
           </div>
         </section>
 
-        <footer className="mt-[28px] text-center text-[12px] font-medium text-[#4A5568]">
-          Gema hadir di {siteConfig.city}
+        <footer className="mt-[42px] text-center text-[12px] font-medium text-[#4A5568] ">
+          <a
+            href="https://www.instagram.com/gema.lpg/"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-[4px] text-[#1E3A5F] transition hover:opacity-80"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle
+                cx="17.5"
+                cy="6.5"
+                r="1"
+                fill="currentColor"
+                stroke="none"
+              />
+            </svg>
+            <span>@gema.lpg</span>
+          </a>
         </footer>
       </div>
     </main>

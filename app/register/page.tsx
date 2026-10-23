@@ -30,7 +30,9 @@ export default function RegisterPage() {
     <main className="flex min-h-screen flex-col bg-[#1E3A5F] px-[28px] pb-[32px] pt-[56px] text-[#FAF7F2]">
       <div className="flex flex-col items-center text-center">
         <GemaMark />
-        <div className="mt-[12px] text-[44px] font-extrabold leading-none">gema</div>
+        <div className="mt-[12px] text-[44px] font-extrabold leading-none">
+          GEMA
+        </div>
         <div className="mt-[8px] text-[12px] font-medium tracking-[2px] text-[#F2B632]">
           GURU KE RUMAH
         </div>
@@ -101,7 +103,37 @@ export default function RegisterPage() {
         </Link>
       </div>
 
-      <div className="mt-[32px] text-center text-[13px] text-[#D6E4F0]">@gema.lpg</div>
+      <div className="mt-[32px] text-center text-[13px] text-[#D6E4F0]">
+        <a
+          href="https://www.instagram.com/gema.lpg/"
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center justify-center gap-[4px] text-[#F2B632] transition hover:opacity-80"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <rect x="3" y="3" width="18" height="18" rx="5" />
+            <circle cx="12" cy="12" r="4" />
+            <circle
+              cx="17.5"
+              cy="6.5"
+              r="1"
+              fill="currentColor"
+              stroke="none"
+            />
+          </svg>
+          <span>@gema.lpg</span>
+        </a>
+      </div>
     </main>
   );
 }

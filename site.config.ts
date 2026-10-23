@@ -1,8 +1,8 @@
 export const siteConfig = {
-  priceLabel: "Rp[HARGA]",
+  priceLabel: "Rp100.000",
   whatsappNumber: "+62 812-3456-7890",
   whatsappUrl: "https://wa.me/6281234567890",
-  city: "Jakarta",
+  city: "Bandar Lampung",
   review: {
     quote: "[Kutipan review asli siswa Gema, satu atau dua kalimat.]",
     author: "[Inisial], kelas [X] [SMP/SMA]",
