@@ -1,0 +1,377 @@
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { siteConfig } from "@/site.config";
+
+const subjectOptions = ["Matematika", "Fisika", "Kimia", "Biologi"];
+const schoolLevels = ["SMP", "SMA"];
+const weekdays = [
+  "Senin",
+  "Selasa",
+  "Rabu",
+  "Kamis",
+  "Jumat",
+  "Sabtu",
+  "Minggu",
+];
+const times = ["13.00", "15.00", "17.00", "19.00"];
+
+const chipBase =
+  "relative inline-flex items-center justify-center rounded-full border text-base font-medium transition-all";
+
+function BackIcon() {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M15 5l-7 7 7 7" />
+    </svg>
+  );
+}
+
+function ProgressDots({ total, current }: { total: number; current: number }) {
+  return (
+    <div className="flex gap-2">
+      {Array.from({ length: total }).map((_, index) => (
+        <div
+          key={index}
+          className={`h-[6px] flex-1 rounded-full ${
+            index < current ? "bg-[#1E3A5F]" : "bg-[#D6E4F0]"
+          }`}
+        />
+      ))}
+    </div>
+  );
+}
+
+function ToggleChip({
+  label,
+  checked,
+  onClick,
+  type = "checkbox",
+}: {
+  label: string;
+  checked: boolean;
+  onClick: () => void;
+  type?: "checkbox" | "radio";
+}) {
+  return (
+    <label className={chipBase + " cursor-pointer"}>
+      <input
+        type={type}
+        checked={checked}
+        onChange={onClick}
+        className="sr-only"
+      />
+      <span
+        className={`inline-flex min-h-[44px] items-center rounded-full border px-[18px] text-[15px] font-medium transition-all ${
+          checked
+            ? "border-[#1E3A5F] bg-[#1E3A5F] text-[#FAF7F2]"
+            : "border-[#B9C4D2] bg-white text-[#1B2430]"
+        }`}
+      >
+        {label}
+      </span>
+    </label>
+  );
+}
+
+function Field({
+  label,
+  placeholder,
+  rows,
+  helper,
+  type = "text",
+}: {
+  label: string;
+  placeholder: string;
+  rows?: number;
+  helper?: string;
+  type?: string;
+}) {
+  const isTextarea = typeof rows === "number";
+
+  return (
+    <div>
+      <label className="mb-[6px] block text-[15px] font-medium text-[#1B2430]">
+        {label}
+      </label>
+      {isTextarea ? (
+        <textarea
+          rows={rows}
+          placeholder={placeholder}
+          className="w-full rounded-[10px] border border-[#B9C4D2] bg-white px-[14px] py-[12px] text-base text-[#1B2430] outline-none transition focus:border-[#1E3A5F] focus:outline-[3px] focus:outline-[#F2B632]"
+        />
+      ) : (
+        <input
+          type={type}
+          placeholder={placeholder}
+          className="w-full rounded-[10px] border border-[#B9C4D2] bg-white px-[14px] py-[12px] text-base text-[#1B2430] outline-none transition focus:border-[#1E3A5F] focus:outline-[3px] focus:outline-[#F2B632]"
+        />
+      )}
+      {helper ? (
+        <div className="mt-[6px] text-[13px] text-[#4A5568]">{helper}</div>
+      ) : null}
+    </div>
+  );
+}
+
+export default function StudentRegisterPage() {
+  const router = useRouter();
+  const [selectedSchoolLevel, setSelectedSchoolLevel] = useState<string>("SMA");
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
+  const [genderPreference, setGenderPreference] = useState<string>(
+    "Tidak ada preferensi",
+  );
+  const [step, setStep] = useState<1 | 2 | 3>(1);
+
+  const handleBack = () => {
+    if (step > 1) {
+      setStep((prev) => (prev - 1) as 1 | 2 | 3);
+      return;
+    }
+
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+      return;
+    }
+
+    router.push("/register");
+  };
+
+  const toggleOption = (
+    value: string,
+    selected: string[],
+    setSelected: (next: string[]) => void,
+  ) => {
+    if (selected.includes(value)) {
+      setSelected(selected.filter((item) => item !== value));
+      return;
+    }
+    setSelected([...selected, value]);
+  };
+
+  const stepTitle =
+    step === 1
+      ? "Kamu mau belajar apa?"
+      : step === 2
+        ? "Kapan kamu bisa belajar?"
+        : "Terakhir, data dirimu";
+
+  const stepSubtitle =
+    step === 1
+      ? "Pilih jenjang dan mata pelajaran."
+      : step === 2
+        ? "Pilih semua hari dan jam yang cocok. Kami cocokkan dengan jadwal guru."
+        : "Supaya tim Gema bisa menghubungi dan guru tahu ke mana harus datang.";
+
+  return (
+    <main className="min-h-screen bg-[#FAF7F2] text-[#1B2430]">
+      <header className="flex h-[64px] items-center gap-[6px] bg-[#1E3A5F] px-[12px] text-[#FAF7F2]">
+        <button
+          type="button"
+          onClick={handleBack}
+          aria-label="Kembali"
+          className="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-transparent text-[#FAF7F2]"
+        >
+          <BackIcon />
+        </button>
+        <span className="text-[18px] font-extrabold">
+          {siteConfig.student.title}
+        </span>
+      </header>
+
+      <div className="px-[24px] pt-[20px]">
+        <div className="mb-[10px] text-[13px] font-bold tracking-[1px] text-[#1E3A5F]">
+          LANGKAH {step} DARI 3
+        </div>
+        <ProgressDots total={3} current={step} />
+        <h1 className="mt-[20px] text-[26px] font-extrabold leading-[1.2] text-[#1E3A5F]">
+          {stepTitle}
+        </h1>
+        <p className="mt-[6px] text-[15px] leading-[1.5] text-[#4A5568]">
+          {stepSubtitle}
+        </p>
+      </div>
+
+      {step === 1 && (
+        <div className="px-[24px] pt-[20px]">
+          <div className="rounded-[12px] bg-[#D6E4F0] px-[16px] py-[12px] text-center">
+            <div className="flex items-baseline justify-center gap-[6px]">
+              <span className="text-[14px] text-[#1B2430]">
+                Biaya mulai dari
+              </span>
+              <span className="text-[18px] font-extrabold text-[#1E3A5F]">
+                {siteConfig.priceLabel}
+              </span>
+            </div>
+            <div className="mt-[2px] text-[14px] text-[#1B2430]">
+              per pertemuan
+            </div>
+          </div>
+
+          <fieldset className="mt-[24px] border-0 p-0">
+            <legend className="mb-[8px] block text-[15px] font-medium">
+              Jenjang sekolah
+            </legend>
+            <div className="flex flex-wrap gap-[10px]">
+              {schoolLevels.map((item) => (
+                <ToggleChip
+                  key={item}
+                  label={item}
+                  checked={selectedSchoolLevel === item}
+                  onClick={() => setSelectedSchoolLevel(item)}
+                  type="radio"
+                />
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="mt-[24px] border-0 p-0">
+            <legend className="mb-[8px] block text-[15px] font-medium">
+              Mata pelajaran
+            </legend>
+            <div className="mb-[8px] text-[14px] text-[#4A5568]">
+              Boleh pilih lebih dari satu
+            </div>
+            <div className="flex flex-wrap gap-[10px]">
+              {subjectOptions.map((item) => (
+                <ToggleChip
+                  key={item}
+                  label={item}
+                  checked={selectedSubjects.includes(item)}
+                  onClick={() =>
+                    toggleOption(item, selectedSubjects, setSelectedSubjects)
+                  }
+                />
+              ))}
+            </div>
+          </fieldset>
+        </div>
+      )}
+
+      {step === 2 && (
+        <div className="px-[24px] pt-[24px]">
+          <fieldset className="mb-[20px] border-0 p-0">
+            <legend className="mb-[8px] block text-[15px] font-medium">
+              Hari yang kamu bisa
+            </legend>
+            <div className="flex flex-wrap gap-[10px]">
+              {weekdays.map((day) => (
+                <ToggleChip
+                  key={day}
+                  label={day}
+                  checked={selectedDays.includes(day)}
+                  onClick={() =>
+                    toggleOption(day, selectedDays, setSelectedDays)
+                  }
+                />
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="mb-[24px] border-0 p-0">
+            <legend className="mb-[8px] block text-[15px] font-medium">
+              Jam yang kamu bisa
+            </legend>
+            <div className="flex flex-wrap gap-[10px]">
+              {times.map((time) => (
+                <ToggleChip
+                  key={time}
+                  label={time}
+                  checked={selectedTimes.includes(time)}
+                  onClick={() =>
+                    toggleOption(time, selectedTimes, setSelectedTimes)
+                  }
+                />
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="border-0 p-0">
+            <legend className="mb-[8px] block text-[15px] font-medium">
+              Preferensi gender guru{" "}
+              <span className="font-normal text-[#4A5568]">(opsional)</span>
+            </legend>
+            <div className="flex flex-wrap gap-[10px]">
+              {["Laki-laki", "Perempuan", "Tidak ada preferensi"].map(
+                (option) => (
+                  <ToggleChip
+                    key={option}
+                    label={option}
+                    checked={genderPreference === option}
+                    onClick={() => setGenderPreference(option)}
+                    type="radio"
+                  />
+                ),
+              )}
+            </div>
+          </fieldset>
+        </div>
+      )}
+
+      {step === 3 && (
+        <div className="flex-1 px-[24px] pt-[24px]">
+          <div className="space-y-[16px]">
+            <Field label="Nama lengkap" placeholder="Nama siswa" />
+            <Field label="Nama sekolah" placeholder="Nama sekolah saat ini" />
+            <Field
+              label="No. telepon (siswa atau orang tua)"
+              placeholder="08xx xxxx xxxx"
+              type="tel"
+            />
+            <Field
+              label="Alamat rumah"
+              placeholder="Jalan, nomor, RT/RW, kelurahan, kota"
+              rows={3}
+              helper="Alamat hanya dibagikan ke guru yang ditugaskan."
+            />
+          </div>
+
+          <div className="mt-[24px] rounded-[14px] border border-[#E3E8EF] bg-white p-[18px]">
+            <div className="h-[20px] text-[40px] font-extrabold leading-none text-[#F2B632]">
+              “
+            </div>
+            <div className="mt-[10px] text-[15px] font-medium leading-[1.55] text-[#1B2430]">
+              {siteConfig.review.quote}
+            </div>
+            <div className="mt-[12px] text-[14px] font-bold text-[#1E3A5F]">
+              {siteConfig.review.author}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="mt-auto border-t border-[#E3E8EF] bg-[#FAF7F2] px-[24px] pb-[24px] pt-[16px]">
+        {step < 3 ? (
+          <button
+            type="button"
+            onClick={() => setStep((prev) => (prev + 1) as 1 | 2 | 3)}
+            className="w-full rounded-full bg-[#F2B632] px-[20px] py-[16px] text-[17px] font-extrabold text-[#1E3A5F]"
+          >
+            Lanjut
+          </button>
+        ) : (
+          <Link
+            href="/confirmation"
+            className="block w-full rounded-full bg-[#F2B632] px-[20px] py-[16px] text-center text-[17px] font-extrabold text-[#1E3A5F]"
+          >
+            Daftar les sekarang
+          </Link>
+        )}
+      </div>
+    </main>
+  );
+}

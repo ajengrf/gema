@@ -1,69 +1,128 @@
-import Image from "next/image";
+import Link from "next/link";
+import { siteConfig } from "@/site.config";
 
-export default function Home() {
+function GemaMark() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
+    <svg width="42" height="42" viewBox="0 0 120 120" aria-hidden="true">
+      <rect x="80" y="20" width="10" height="22" fill="#F2B632" />
+      <polygon points="80,20 85,6 90,20" fill="#1E3A5F" />
+      <polyline
+        points="16,60 60,24 104,60"
+        fill="none"
+        stroke="#1E3A5F"
+        strokeWidth="9"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M78 69.4 A22 22 0 1 0 82 82 L62 82"
+        fill="none"
+        stroke="#1E3A5F"
+        strokeWidth="9"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <main className="min-h-screen bg-[#FAF7F2] text-[#1E3A5F]">
+      <div className="mx-auto max-w-md px-[24px] pb-[32px] pt-[22px]">
+        <header className="flex items-center justify-between">
+          <div className="flex items-center gap-[10px]">
+            <div className="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-[#E8F1F8]">
+              <GemaMark />
+            </div>
+            <div>
+              <div className="text-[28px] font-extrabold leading-none">gema</div>
+              <div className="mt-[2px] text-[9px] font-bold tracking-[2px] text-[#F2B632]">
+                GURU KE RUMAH
+              </div>
+            </div>
+          </div>
+
+          <Link
+            href="/register"
+            className="rounded-full border border-[#D6E4F0] bg-white px-[16px] py-[10px] text-[13px] font-bold text-[#1E3A5F]"
+          >
+            Daftar
+          </Link>
+        </header>
+
+        <section className="mt-[28px] overflow-hidden rounded-[28px] bg-[#1E3A5F] p-[22px] text-[#FAF7F2] shadow-[0_18px_42px_rgba(30,58,95,0.18)]">
+          <div className="inline-flex rounded-full bg-[#F4D77B] px-[10px] py-[6px] text-[11px] font-bold text-[#1E3A5F]">
+            Pilihan paling cocok untuk belajar di rumah
+          </div>
+
+          <h1 className="mt-[18px] text-[34px] font-extrabold leading-[1.08] tracking-[-0.03em]">
+            Cari guru les pribadi yang tepat untukmu.
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+
+          <p className="mt-[12px] text-[15px] leading-[1.6] text-[#D6E4F0]">
+            Belajar dengan guru berpengalaman, jadwal yang fleksibel, dan proses
+            pendaftaran yang cepat.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+
+          <div className="mt-[22px] flex gap-[12px]">
+            <Link
+              href="/register"
+              className="flex-1 rounded-full bg-[#F2B632] px-[18px] py-[15px] text-center text-[15px] font-extrabold text-[#1E3A5F]"
+            >
+              Daftar sekarang
+            </Link>
+          </div>
+
+          <div className="mt-[22px] rounded-[18px] bg-[#FAF7F2] p-[16px] text-[#1E3A5F]">
+            <div className="flex items-center justify-between gap-[8px]">
+              <span className="text-[14px] font-medium">Biaya mulai dari</span>
+              <span className="text-[24px] font-extrabold leading-none">
+                {siteConfig.priceLabel}
+              </span>
+            </div>
+            <div className="mt-[4px] text-[13px] font-medium text-[#4A5568]">
+              per pertemuan
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-[24px] grid gap-[12px]">
+          {[
+            { title: "Guru berkualitas", body: "Dipilih sesuai kebutuhan dan jenjang belajar." },
+            { title: "Jadwal fleksibel", body: "Pilih hari dan jam yang paling cocok untuk kamu." },
+            { title: "Proses mudah", body: "Daftar cepat, hubungi guru, dan mulai belajar." },
+          ].map((item) => (
+            <div
+              key={item.title}
+              className="rounded-[18px] border border-[#D6E4F0] bg-white p-[16px]"
+            >
+              <div className="text-[18px] font-extrabold text-[#1E3A5F]">
+                {item.title}
+              </div>
+              <div className="mt-[6px] text-[14px] leading-[1.5] text-[#4A5568]">
+                {item.body}
+              </div>
+            </div>
+          ))}
+        </section>
+
+        <section className="mt-[24px] rounded-[18px] border border-[#E8EEF4] bg-white p-[18px]">
+          <div className="text-[14px] font-bold uppercase tracking-[1px] text-[#4A5568]">
+            Review siswa
+          </div>
+          <div className="mt-[12px] text-[16px] font-medium leading-[1.6] text-[#1E3A5F]">
+            “{siteConfig.review.quote}”
+          </div>
+          <div className="mt-[14px] text-[13px] font-bold text-[#1E3A5F]">
+            {siteConfig.review.author}
+          </div>
+        </section>
+
+        <footer className="mt-[28px] text-center text-[12px] font-medium text-[#4A5568]">
+          Gema hadir di {siteConfig.city}
+        </footer>
+      </div>
+    </main>
   );
 }
