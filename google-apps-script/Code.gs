@@ -17,23 +17,36 @@ function doPost(event) {
     lock.waitLock(10000);
 
     try {
-      const sheet = getRegistrationSheet(spreadsheetId);
-      sheet.appendRow([
+      const sheet = getRegistrationSheet(spreadsheetId, payload.type);
+      const commonValues = [
         new Date(),
-        payload.type,
         payload.fullName || "",
         payload.phone || "",
         payload.address || "",
         payload.schoolLevel || "",
-        payload.schoolName || "",
-        payload.university || "",
-        payload.studyProgram || "",
-        payload.experience || "",
+      ];
+      const scheduleValues = [
         (payload.subjects || []).join(", "),
         (payload.days || []).join(", "),
         (payload.times || []).join(", "),
-        payload.genderPreference || "",
-      ]);
+      ];
+
+      if (payload.type === "student") {
+        sheet.appendRow([
+          ...commonValues,
+          payload.schoolName || "",
+          ...scheduleValues,
+          payload.genderPreference || "",
+        ]);
+      } else {
+        sheet.appendRow([
+          ...commonValues,
+          payload.university || "",
+          payload.studyProgram || "",
+          payload.experience || "",
+          ...scheduleValues,
+        ]);
+      }
     } finally {
       lock.releaseLock();
     }
@@ -45,31 +58,44 @@ function doPost(event) {
   }
 }
 
-function getRegistrationSheet(spreadsheetId) {
+function getRegistrationSheet(spreadsheetId, type) {
   const spreadsheet = SpreadsheetApp.openById(spreadsheetId);
-  let sheet = spreadsheet.getSheetByName("Pendaftaran");
+  const isStudent = type === "student";
+  const sheetName = isStudent ? "Pendaftaran Siswa" : "Pendaftaran Guru";
+  const headers = isStudent
+    ? [
+        "Waktu daftar",
+        "Nama lengkap",
+        "Nomor telepon",
+        "Alamat",
+        "Jenjang",
+        "Nama sekolah",
+        "Mata pelajaran",
+        "Hari tersedia",
+        "Jam tersedia",
+        "Preferensi gender guru",
+      ]
+    : [
+        "Waktu daftar",
+        "Nama lengkap",
+        "Nomor telepon",
+        "Alamat",
+        "Jenjang yang diajar",
+        "Universitas",
+        "Program studi",
+        "Pengalaman mengajar",
+        "Mata pelajaran",
+        "Hari tersedia",
+        "Jam tersedia",
+      ];
+  let sheet = spreadsheet.getSheetByName(sheetName);
 
   if (!sheet) {
-    sheet = spreadsheet.insertSheet("Pendaftaran");
+    sheet = spreadsheet.insertSheet(sheetName);
   }
 
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow([
-      "Waktu daftar",
-      "Jenis pendaftar",
-      "Nama lengkap",
-      "Nomor telepon",
-      "Alamat",
-      "Jenjang",
-      "Nama sekolah",
-      "Universitas",
-      "Program studi",
-      "Pengalaman mengajar",
-      "Mata pelajaran",
-      "Hari tersedia",
-      "Jam tersedia",
-      "Preferensi gender guru",
-    ]);
+    sheet.appendRow(headers);
   }
 
   return sheet;

@@ -3,6 +3,8 @@
 The site stays a Next.js static export. A Cloudflare Pages Function at
 `/api/registrations` securely forwards student and teacher registrations to a
 Google Apps Script web app, which appends them to Google Sheets.
+The script creates and uses separate `Pendaftaran Siswa` and `Pendaftaran Guru`
+tabs, each with columns relevant to that registration type.
 
 ## Google Sheets and Apps Script
 

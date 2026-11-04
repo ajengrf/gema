@@ -54,7 +54,7 @@ export const onRequest: (context: PagesContext) => Promise<Response> = async ({
   }
 
   if (payload.website) {
-    return jsonResponse({ ok: true }, 200);
+    return jsonResponse({ error: "Pendaftaran tidak dapat diproses." }, 400);
   }
 
   if (payload.type !== "student" && payload.type !== "teacher") {
