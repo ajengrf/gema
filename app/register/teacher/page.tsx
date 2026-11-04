@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { siteConfig } from "@/site.config";
+import { submitRegistration } from "@/lib/registrations";
 
 const subjectOptionsByLevel = {
   SMP: ["Matematika", "IPA", "IPS", "Bahasa Inggris"],
@@ -104,11 +104,17 @@ function ToggleChip({
 function Field({
   label,
   placeholder,
+  name,
+  value,
+  onChange,
   rows,
   type = "text",
 }: {
   label: string;
   placeholder: string;
+  name: string;
+  value: string;
+  onChange: (value: string) => void;
   rows?: number;
   type?: string;
 }) {
@@ -116,18 +122,28 @@ function Field({
 
   return (
     <div>
-      <label className="mb-[6px] block text-[15px] font-medium text-[#1B2430]">
+      <label htmlFor={name} className="mb-[6px] block text-[15px] font-medium text-[#1B2430]">
         {label}
       </label>
       {isTextarea ? (
         <textarea
+          id={name}
+          name={name}
           rows={rows}
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          required
           placeholder={placeholder}
           className="w-full rounded-[10px] border border-[#B9C4D2] bg-white px-[14px] py-[12px] text-base text-[#1B2430] outline-none transition focus:border-[#1E3A5F] focus:outline-[3px] focus:outline-[#F2B632]"
         />
       ) : (
         <input
+          id={name}
+          name={name}
           type={type}
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          required
           placeholder={placeholder}
           className="w-full rounded-[10px] border border-[#B9C4D2] bg-white px-[14px] py-[12px] text-base text-[#1B2430] outline-none transition focus:border-[#1E3A5F] focus:outline-[3px] focus:outline-[#F2B632]"
         />
@@ -143,15 +159,18 @@ export default function TeacherRegisterPage() {
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
+  const [details, setDetails] = useState({
+    university: "",
+    studyProgram: "",
+    experience: "",
+    fullName: "",
+    phone: "",
+    address: "",
+  });
+  const [website, setWebsite] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [step, setStep] = useState<1 | 2 | 3>(1);
-
-  useEffect(() => {
-    setSelectedSubjects((prev) =>
-      prev.filter((subject) =>
-        subjectOptionsByLevel[selectedSchoolLevel].includes(subject),
-      ),
-    );
-  }, [selectedSchoolLevel]);
 
   const handleBack = () => {
     if (step > 1) {
@@ -177,6 +196,41 @@ export default function TeacherRegisterPage() {
       return;
     }
     setSelected([...selected, value]);
+  };
+
+  const updateDetail = (field: keyof typeof details, value: string) => {
+    setDetails((current) => ({ ...current, [field]: value }));
+  };
+
+  const selectSchoolLevel = (level: keyof typeof subjectOptionsByLevel) => {
+    setSelectedSchoolLevel(level);
+    setSelectedSubjects((current) =>
+      current.filter((subject) => subjectOptionsByLevel[level].includes(subject)),
+    );
+  };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    try {
+      await submitRegistration({
+        type: "teacher",
+        schoolLevel: selectedSchoolLevel,
+        subjects: selectedSubjects,
+        days: selectedDays,
+        times: selectedTimes,
+        ...details,
+        website,
+      });
+      router.push("/confirmation");
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "Pendaftaran gagal dikirim.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -228,11 +282,7 @@ export default function TeacherRegisterPage() {
                   key={item}
                   label={item}
                   checked={selectedSchoolLevel === item}
-                  onClick={() =>
-                    setSelectedSchoolLevel(
-                      item as keyof typeof subjectOptionsByLevel,
-                    )
-                  }
+                  onClick={() => selectSchoolLevel(item as keyof typeof subjectOptionsByLevel)}
                   type="radio"
                 />
               ))}
@@ -300,10 +350,25 @@ export default function TeacherRegisterPage() {
 
       {step === 2 && (
         <div className="flex-1 space-y-[16px] px-[24px] pt-[24px]">
-          <Field label="Universitas" placeholder="Nama universitas" />
-          <Field label="Prodi" placeholder="Program studi" />
+          <Field
+            label="Universitas"
+            name="university"
+            value={details.university}
+            onChange={(value) => updateDetail("university", value)}
+            placeholder="Nama universitas"
+          />
+          <Field
+            label="Prodi"
+            name="studyProgram"
+            value={details.studyProgram}
+            onChange={(value) => updateDetail("studyProgram", value)}
+            placeholder="Program studi"
+          />
           <Field
             label="Pengalaman mengajar"
+            name="experience"
+            value={details.experience}
+            onChange={(value) => updateDetail("experience", value)}
             placeholder="Contoh: les privat, bimbel, asisten dosen, atau mengajar di sekolah. Tulis juga berapa lama."
             rows={5}
           />
@@ -312,32 +377,69 @@ export default function TeacherRegisterPage() {
 
       {step === 3 && (
         <div className="flex-1 space-y-[16px] px-[24px] pt-[24px]">
-          <Field label="Nama lengkap" placeholder="Nama lengkap" />
-          <Field label="No. telepon" placeholder="08xx xxxx xxxx" type="tel" />
+          <Field
+            label="Nama lengkap"
+            name="fullName"
+            value={details.fullName}
+            onChange={(value) => updateDetail("fullName", value)}
+            placeholder="Nama lengkap"
+          />
+          <Field
+            label="No. telepon"
+            name="phone"
+            value={details.phone}
+            onChange={(value) => updateDetail("phone", value)}
+            placeholder="08xx xxxx xxxx"
+            type="tel"
+          />
           <Field
             label="Alamat"
+            name="address"
+            value={details.address}
+            onChange={(value) => updateDetail("address", value)}
             placeholder="Jalan, nomor, RT/RW, kelurahan, kota"
             rows={3}
           />
         </div>
       )}
 
-      <div className="mt-[16px] border-t border-[#E3E8EF] bg-[#FAF7F2] px-[24px] pb-[24px] pt-[16px]">
+      <div
+        aria-hidden="true"
+        className="absolute -left-[9999px] h-px w-px overflow-hidden"
+      >
+        <label htmlFor="teacher-website">Website</label>
+        <input
+          id="teacher-website"
+          tabIndex={-1}
+          autoComplete="off"
+          value={website}
+          onChange={(event) => setWebsite(event.target.value)}
+        />
+      </div>
+
+      <div className="sticky bottom-0 z-20 mt-[16px] border-t border-[#E3E8EF] bg-[#FAF7F2]/95 px-[24px] pb-[24px] pt-[16px] backdrop-blur-sm">
+        {submitError ? (
+          <p role="alert" className="mb-[12px] text-[14px] font-medium text-red-700">
+            {submitError}
+          </p>
+        ) : null}
         {step < 3 ? (
           <button
             type="button"
             onClick={() => setStep((prev) => (prev + 1) as 1 | 2 | 3)}
-            className="w-full rounded-full bg-[#F2B632] px-[20px] py-[16px] text-[17px] font-extrabold text-[#1E3A5F]"
+            className="w-full rounded-full bg-[#F2B632] px-[20px] py-[16px] text-[17px] font-extrabold text-[#1E3A5F] shadow-[0_8px_18px_rgba(242,182,50,0.28)]"
           >
             Lanjut
           </button>
         ) : (
-          <Link
-            href="/confirmation"
-            className="block w-full rounded-full bg-[#F2B632] px-[20px] py-[16px] text-center text-[17px] font-extrabold text-[#1E3A5F]"
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="block w-full rounded-full bg-[#F2B632] px-[20px] py-[16px] text-center text-[17px] font-extrabold text-[#1E3A5F] shadow-[0_8px_18px_rgba(242,182,50,0.28)] disabled:cursor-wait disabled:opacity-60"
           >
-            Kirim pendaftaran
-          </Link>
+            {isSubmitting ? "Mengirim..." : "Kirim pendaftaran"}
+          </button>
         )}
       </div>
     </main>
