@@ -5,6 +5,15 @@ The site stays a Next.js static export. A Cloudflare Pages Function at
 Google Apps Script web app, which appends them to Google Sheets.
 The script creates and uses separate `Pendaftaran Siswa` and `Pendaftaran Guru`
 tabs, each with columns relevant to that registration type.
+Each saved row receives a unique `GM-...` registration ID. The ID is returned
+to the confirmation page and included in the role-specific WhatsApp message.
+New tabs place `ID Pendaftaran` in column B. Existing tabs receive that header
+at the end if it is missing, preserving current column positions and rows. New
+rows are aligned to the actual header order.
+
+When deploying a change to the ID response, update and deploy the Apps Script
+Web App first. Then build and deploy Pages. The Pages Function expects the Apps
+Script response to include both `ok: true` and `registrationId`.
 
 ## Google Sheets and Apps Script
 
@@ -16,9 +25,14 @@ tabs, each with columns relevant to that registration type.
    - `SPREADSHEET_ID`: the ID copied in step 1.
    - `REGISTRATION_SECRET`: a long random value. Generate one locally with
      `openssl rand -hex 32`; do not commit or share it.
-4. Deploy the script as a **Web app**, executing as yourself, with access set
+   - `NOTIFICATION_EMAIL`: the email address that should receive registration
+     notifications. This property is optional; multiple addresses can be
+     comma-separated.
+4. To authorize email sending, select `authorizeEmailNotifications` in the
+   Apps Script editor, click **Run**, and grant the requested permission.
+5. Deploy the script as a **Web app**, executing as yourself, with access set
    to **Anyone**. The script checks the shared secret before writing anything.
-5. Copy the Web app URL ending in `/exec`.
+6. Copy the Web app URL ending in `/exec`.
 
 ## Cloudflare Pages secrets
 

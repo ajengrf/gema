@@ -74,7 +74,10 @@ export const onRequest: (context: PagesContext) => Promise<Response> = async ({
         (payload[field] as string).length > 2_000,
     )
   ) {
-    return jsonResponse({ error: "Lengkapi semua data wajib terlebih dahulu." }, 400);
+    return jsonResponse(
+      { error: "Lengkapi semua data wajib terlebih dahulu." },
+      400,
+    );
   }
 
   if (
@@ -94,16 +97,31 @@ export const onRequest: (context: PagesContext) => Promise<Response> = async ({
     });
 
     if (!response.ok) {
-      return jsonResponse({ error: "Pendaftaran belum berhasil disimpan." }, 502);
+      return jsonResponse(
+        { error: "Pendaftaran belum berhasil disimpan." },
+        502,
+      );
     }
 
-    const result = (await response.json()) as { ok?: boolean };
-    if (!result.ok) {
-      return jsonResponse({ error: "Pendaftaran belum berhasil disimpan." }, 502);
+    const result = (await response.json()) as {
+      ok?: boolean;
+      registrationId?: string;
+    };
+    if (!result.ok || !result.registrationId) {
+      return jsonResponse(
+        { error: "Pendaftaran belum berhasil disimpan." },
+        502,
+      );
     }
 
-    return jsonResponse({ ok: true }, 200);
+    return jsonResponse(
+      { ok: true, registrationId: result.registrationId },
+      200,
+    );
   } catch {
-    return jsonResponse({ error: "Tidak dapat menghubungi layanan pendaftaran." }, 502);
+    return jsonResponse(
+      { error: "Tidak dapat menghubungi layanan pendaftaran." },
+      502,
+    );
   }
 };

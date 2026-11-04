@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { siteConfig } from "@/site.config";
+import WhatsAppRegistrationLink from "./whatsapp-registration-link";
 
 export default function ConfirmationPage() {
   return (
@@ -37,14 +38,7 @@ export default function ConfirmationPage() {
             </a>
           </div>
 
-          <Link
-            href={siteConfig.whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-[24px] block w-full rounded-full bg-[#F2B632] px-[20px] py-[16px] text-center text-[17px] font-extrabold text-[#1E3A5F]"
-          >
-            Chat WhatsApp
-          </Link>
+          <WhatsAppRegistrationLink />
         </div>
       </div>
     </main>

@@ -16,42 +16,39 @@ function doPost(event) {
     const lock = LockService.getScriptLock();
     lock.waitLock(10000);
 
+    const registrationId = `GM-${Utilities.getUuid().toUpperCase()}`;
     try {
       const sheet = getRegistrationSheet(spreadsheetId, payload.type);
-      const commonValues = [
-        new Date(),
-        payload.fullName || "",
-        payload.phone || "",
-        payload.address || "",
-        payload.schoolLevel || "",
-      ];
-      const scheduleValues = [
-        (payload.subjects || []).join(", "),
-        (payload.days || []).join(", "),
-        (payload.times || []).join(", "),
-      ];
+      const headers = sheet
+        .getRange(1, 1, 1, sheet.getLastColumn())
+        .getValues()[0];
+      const valuesByHeader = {
+        "Waktu daftar": new Date(),
+        "ID Pendaftaran": registrationId,
+        "Nama lengkap": payload.fullName || "",
+        "Nomor telepon": payload.phone || "",
+        Alamat: payload.address || "",
+        Jenjang:
+          payload.type === "student" ? payload.schoolLevel || "" : undefined,
+        "Jenjang yang diajar":
+          payload.type === "teacher" ? payload.schoolLevel || "" : undefined,
+        "Nama sekolah": payload.schoolName || "",
+        Universitas: payload.university || "",
+        "Program studi": payload.studyProgram || "",
+        "Pengalaman mengajar": payload.experience || "",
+        "Mata pelajaran": (payload.subjects || []).join(", "),
+        "Hari tersedia": (payload.days || []).join(", "),
+        "Jam tersedia": (payload.times || []).join(", "),
+        "Preferensi gender guru": payload.genderPreference || "",
+      };
 
-      if (payload.type === "student") {
-        sheet.appendRow([
-          ...commonValues,
-          payload.schoolName || "",
-          ...scheduleValues,
-          payload.genderPreference || "",
-        ]);
-      } else {
-        sheet.appendRow([
-          ...commonValues,
-          payload.university || "",
-          payload.studyProgram || "",
-          payload.experience || "",
-          ...scheduleValues,
-        ]);
-      }
+      sheet.appendRow(headers.map((header) => valuesByHeader[header] ?? ""));
     } finally {
       lock.releaseLock();
     }
 
-    return jsonResponse({ ok: true });
+    sendRegistrationNotification(payload, spreadsheetId, registrationId);
+    return jsonResponse({ ok: true, registrationId });
   } catch (error) {
     console.error(error);
     return jsonResponse({ ok: false });
@@ -65,6 +62,7 @@ function getRegistrationSheet(spreadsheetId, type) {
   const headers = isStudent
     ? [
         "Waktu daftar",
+        "ID Pendaftaran",
         "Nama lengkap",
         "Nomor telepon",
         "Alamat",
@@ -77,6 +75,7 @@ function getRegistrationSheet(spreadsheetId, type) {
       ]
     : [
         "Waktu daftar",
+        "ID Pendaftaran",
         "Nama lengkap",
         "Nomor telepon",
         "Alamat",
@@ -96,9 +95,57 @@ function getRegistrationSheet(spreadsheetId, type) {
 
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(headers);
+  } else {
+    const existingHeaders = sheet
+      .getRange(1, 1, 1, sheet.getLastColumn())
+      .getValues()[0];
+    if (!existingHeaders.includes("ID Pendaftaran")) {
+      sheet.getRange(1, sheet.getLastColumn() + 1).setValue("ID Pendaftaran");
+    }
   }
 
   return sheet;
+}
+
+function sendRegistrationNotification(payload, spreadsheetId, registrationId) {
+  try {
+    const recipient =
+      PropertiesService.getScriptProperties().getProperty("NOTIFICATION_EMAIL");
+    if (!recipient) return;
+
+    const spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+    const sheetName =
+      payload.type === "student" ? "Pendaftaran Siswa" : "Pendaftaran Guru";
+    const sheet = spreadsheet.getSheetByName(sheetName);
+    if (!sheet) throw new Error(`Sheet tidak ditemukan: ${sheetName}`);
+
+    const spreadsheetUrl = `${spreadsheet.getUrl()}#gid=${sheet.getSheetId()}`;
+    const registrationType = payload.type === "student" ? "Siswa" : "Guru";
+    const body = [
+      `Ada pendaftaran ${registrationType} baru.`,
+      `ID pendaftaran: ${registrationId}`,
+      `Nama: ${payload.fullName || "-"}`,
+      `Telepon: ${payload.phone || "-"}`,
+      `Jenjang: ${payload.schoolLevel || "-"}`,
+      `Mata pelajaran: ${(payload.subjects || []).join(", ") || "-"}`,
+      `Hari: ${(payload.days || []).join(", ") || "-"}`,
+      `Jam: ${(payload.times || []).join(", ") || "-"}`,
+      "",
+      `Buka tab ${sheetName}: ${spreadsheetUrl}`,
+    ].join("\n");
+
+    MailApp.sendEmail({
+      to: recipient,
+      subject: `[Gema] Pendaftaran ${registrationType} baru`,
+      body,
+    });
+  } catch (error) {
+    console.error("Notifikasi email gagal dikirim:", error);
+  }
+}
+
+function authorizeEmailNotifications() {
+  MailApp.getRemainingDailyQuota();
 }
 
 function jsonResponse(body) {

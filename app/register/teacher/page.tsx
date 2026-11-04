@@ -122,7 +122,10 @@ function Field({
 
   return (
     <div>
-      <label htmlFor={name} className="mb-[6px] block text-[15px] font-medium text-[#1B2430]">
+      <label
+        htmlFor={name}
+        className="mb-[6px] block text-[15px] font-medium text-[#1B2430]"
+      >
         {label}
       </label>
       {isTextarea ? (
@@ -205,7 +208,9 @@ export default function TeacherRegisterPage() {
   const selectSchoolLevel = (level: keyof typeof subjectOptionsByLevel) => {
     setSelectedSchoolLevel(level);
     setSelectedSubjects((current) =>
-      current.filter((subject) => subjectOptionsByLevel[level].includes(subject)),
+      current.filter((subject) =>
+        subjectOptionsByLevel[level].includes(subject),
+      ),
     );
   };
 
@@ -214,7 +219,7 @@ export default function TeacherRegisterPage() {
     setSubmitError("");
 
     try {
-      await submitRegistration({
+      const { registrationId } = await submitRegistration({
         type: "teacher",
         schoolLevel: selectedSchoolLevel,
         subjects: selectedSubjects,
@@ -223,7 +228,9 @@ export default function TeacherRegisterPage() {
         ...details,
         website,
       });
-      router.push("/confirmation");
+      router.push(
+        `/confirmation?type=teacher&id=${encodeURIComponent(registrationId)}`,
+      );
     } catch (error) {
       setSubmitError(
         error instanceof Error ? error.message : "Pendaftaran gagal dikirim.",
@@ -282,7 +289,11 @@ export default function TeacherRegisterPage() {
                   key={item}
                   label={item}
                   checked={selectedSchoolLevel === item}
-                  onClick={() => selectSchoolLevel(item as keyof typeof subjectOptionsByLevel)}
+                  onClick={() =>
+                    selectSchoolLevel(
+                      item as keyof typeof subjectOptionsByLevel,
+                    )
+                  }
                   type="radio"
                 />
               ))}
@@ -419,7 +430,10 @@ export default function TeacherRegisterPage() {
 
       <div className="sticky bottom-0 z-20 mt-[16px] border-t border-[#E3E8EF] bg-[#FAF7F2]/95 px-[24px] pb-[24px] pt-[16px] backdrop-blur-sm">
         {submitError ? (
-          <p role="alert" className="mb-[12px] text-[14px] font-medium text-red-700">
+          <p
+            role="alert"
+            className="mb-[12px] text-[14px] font-medium text-red-700"
+          >
             {submitError}
           </p>
         ) : null}

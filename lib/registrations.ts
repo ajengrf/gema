@@ -29,7 +29,7 @@ export type TeacherRegistration = {
 
 export async function submitRegistration(
   payload: StudentRegistration | TeacherRegistration,
-): Promise<void> {
+): Promise<{ registrationId: string }> {
   const requiredFields =
     payload.type === "student"
       ? [payload.fullName, payload.schoolName, payload.phone, payload.address]
@@ -51,8 +51,14 @@ export async function submitRegistration(
     body: JSON.stringify(payload),
   });
 
-  const result = (await response.json()) as { error?: string; ok?: boolean };
-  if (!response.ok || !result.ok) {
+  const result = (await response.json()) as {
+    error?: string;
+    ok?: boolean;
+    registrationId?: string;
+  };
+  if (!response.ok || !result.ok || !result.registrationId) {
     throw new Error(result.error ?? "Pendaftaran gagal dikirim.");
   }
+
+  return { registrationId: result.registrationId };
 }
