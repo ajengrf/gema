@@ -5,6 +5,8 @@ import { useState } from "react";
 import { siteConfig } from "@/site.config";
 import { submitRegistration } from "@/lib/registrations";
 import { saveRegistrationConfirmation } from "@/lib/registration-confirmation";
+import { getTemporaryLocation } from "@/lib/home-location";
+import HomeLocationFields from "../home-location-fields";
 
 const subjectOptionsByLevel = {
   SMP: ["Matematika", "IPA", "IPS", "Bahasa Inggris", "Lainnya"],
@@ -184,6 +186,8 @@ export default function StudentRegisterPage() {
     phone: "",
     address: "",
   });
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [selectedSubdistrict, setSelectedSubdistrict] = useState("");
   const [website, setWebsite] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -229,6 +233,15 @@ export default function StudentRegisterPage() {
   };
 
   const handleSubmit = async () => {
+    const location = getTemporaryLocation(
+      selectedDistrict,
+      selectedSubdistrict,
+    );
+    if (!location || !details.address.trim()) {
+      setSubmitError("Lengkapi lokasi dan alamat rumah terlebih dahulu.");
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitError("");
 
@@ -241,6 +254,9 @@ export default function StudentRegisterPage() {
         times: selectedTimes,
         genderPreference,
         ...details,
+        kodeWilayah: location.code,
+        kecamatan: location.district,
+        kelurahan: location.subdistrict,
         website,
       });
       saveRegistrationConfirmation({
@@ -446,12 +462,21 @@ export default function StudentRegisterPage() {
               placeholder="08xx xxxx xxxx"
               type="tel"
             />
+            <HomeLocationFields
+              district={selectedDistrict}
+              subdistrict={selectedSubdistrict}
+              onDistrictChange={(value) => {
+                setSelectedDistrict(value);
+                setSelectedSubdistrict("");
+              }}
+              onSubdistrictChange={setSelectedSubdistrict}
+            />
             <Field
               label="Alamat rumah"
               name="address"
               value={details.address}
               onChange={(value) => updateDetail("address", value)}
-              placeholder="Jalan, nomor, RT/RW, kelurahan, kota"
+              placeholder="Nama jalan, nomor rumah, RT/RW"
               rows={3}
               helper="Alamat hanya dibagikan ke guru yang ditugaskan."
             />

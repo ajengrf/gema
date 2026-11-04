@@ -8,6 +8,9 @@ export type StudentRegistration = {
   fullName: string;
   schoolName: string;
   phone: string;
+  kodeWilayah: string;
+  kecamatan: string;
+  kelurahan: string;
   address: string;
   website: string;
 };
@@ -23,6 +26,9 @@ export type TeacherRegistration = {
   experience: string;
   fullName: string;
   phone: string;
+  kodeWilayah: string;
+  kecamatan: string;
+  kelurahan: string;
   address: string;
   website: string;
 };
@@ -32,10 +38,21 @@ export async function submitRegistration(
 ): Promise<{ registrationId: string }> {
   const requiredFields =
     payload.type === "student"
-      ? [payload.fullName, payload.schoolName, payload.phone, payload.address]
+      ? [
+          payload.fullName,
+          payload.schoolName,
+          payload.phone,
+          payload.kodeWilayah,
+          payload.kecamatan,
+          payload.kelurahan,
+          payload.address,
+        ]
       : [
           payload.fullName,
           payload.phone,
+          payload.kodeWilayah,
+          payload.kecamatan,
+          payload.kelurahan,
           payload.address,
           payload.university,
           payload.studyProgram,

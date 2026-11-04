@@ -30,7 +30,10 @@ function doPost(event) {
         "ID Pendaftaran": registrationId,
         "Nama lengkap": payload.fullName || "",
         "Nomor telepon": payload.phone || "",
-        Alamat: payload.address || "",
+        kode_wilayah: payload.kodeWilayah || "",
+        kecamatan: payload.kecamatan || "",
+        kelurahan: payload.kelurahan || "",
+        alamat: payload.address || "",
         Jenjang:
           payload.type === "student" ? payload.schoolLevel || "" : undefined,
         "Jenjang yang diajar":
@@ -68,7 +71,10 @@ function getRegistrationSheet(spreadsheetId, type) {
         "ID Pendaftaran",
         "Nama lengkap",
         "Nomor telepon",
-        "Alamat",
+        "kode_wilayah",
+        "kecamatan",
+        "kelurahan",
+        "alamat",
         "Jenjang",
         "Nama sekolah",
         "Mata pelajaran",
@@ -81,7 +87,10 @@ function getRegistrationSheet(spreadsheetId, type) {
         "ID Pendaftaran",
         "Nama lengkap",
         "Nomor telepon",
-        "Alamat",
+        "kode_wilayah",
+        "kecamatan",
+        "kelurahan",
+        "alamat",
         "Jenjang yang diajar",
         "Universitas",
         "Program studi",
@@ -99,11 +108,22 @@ function getRegistrationSheet(spreadsheetId, type) {
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(headers);
   } else {
-    const existingHeaders = sheet
+    let existingHeaders = sheet
       .getRange(1, 1, 1, sheet.getLastColumn())
       .getValues()[0];
-    if (!existingHeaders.includes("ID Pendaftaran")) {
-      sheet.getRange(1, sheet.getLastColumn() + 1).setValue("ID Pendaftaran");
+
+    const oldAddressIndex = existingHeaders.indexOf("Alamat");
+    if (oldAddressIndex !== -1 && !existingHeaders.includes("alamat")) {
+      sheet.getRange(1, oldAddressIndex + 1).setValue("alamat");
+      existingHeaders[oldAddressIndex] = "alamat";
+    }
+
+    for (const header of headers) {
+      if (!existingHeaders.includes(header)) {
+        const nextColumn = sheet.getLastColumn() + 1;
+        sheet.getRange(1, nextColumn).setValue(header);
+        existingHeaders = [...existingHeaders, header];
+      }
     }
   }
 

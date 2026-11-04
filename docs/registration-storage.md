@@ -5,6 +5,9 @@ The site stays a Next.js static export. A Cloudflare Pages Function at
 Google Apps Script web app, which appends them to Google Sheets.
 The script creates and uses separate `Pendaftaran Siswa` and `Pendaftaran Guru`
 tabs, each with columns relevant to that registration type.
+Each tab stores the location in separate `kode_wilayah`, `kecamatan`,
+`kelurahan`, and `alamat` columns. Current `kode_wilayah` options start with
+`DUMMY-` and must be replaced with official codes when available.
 Each saved row receives a `GM` ID followed by eight hexadecimal characters,
 for example `GM729C7539`. The suffix is derived from a UUID. Since only eight
 characters are used and duplicates are not checked, an ID collision is

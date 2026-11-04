@@ -63,8 +63,25 @@ export const onRequest: (context: PagesContext) => Promise<Response> = async ({
 
   const requiredFields =
     payload.type === "student"
-      ? ["fullName", "schoolName", "phone", "address"]
-      : ["fullName", "phone", "address", "university", "studyProgram"];
+      ? [
+          "fullName",
+          "schoolName",
+          "phone",
+          "kodeWilayah",
+          "kecamatan",
+          "kelurahan",
+          "address",
+        ]
+      : [
+          "fullName",
+          "phone",
+          "kodeWilayah",
+          "kecamatan",
+          "kelurahan",
+          "address",
+          "university",
+          "studyProgram",
+        ];
 
   if (
     requiredFields.some(
