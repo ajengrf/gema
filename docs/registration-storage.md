@@ -5,8 +5,11 @@ The site stays a Next.js static export. A Cloudflare Pages Function at
 Google Apps Script web app, which appends them to Google Sheets.
 The script creates and uses separate `Pendaftaran Siswa` and `Pendaftaran Guru`
 tabs, each with columns relevant to that registration type.
-Each saved row receives a unique `GM-...` registration ID. The ID is returned
-to the confirmation page and included in the role-specific WhatsApp message.
+Each saved row receives a `GM` ID followed by eight hexadecimal characters,
+for example `GM729C7539`. The suffix is derived from a UUID. Since only eight
+characters are used and duplicates are not checked, an ID collision is
+possible in theory. The ID is returned to the confirmation page and included
+in the role-specific WhatsApp message.
 New tabs place `ID Pendaftaran` in column B. Existing tabs receive that header
 at the end if it is missing, preserving current column positions and rows. New
 rows are aligned to the actual header order.

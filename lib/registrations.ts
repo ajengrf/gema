@@ -45,6 +45,17 @@ export async function submitRegistration(
     throw new Error("Lengkapi semua data wajib terlebih dahulu.");
   }
 
+  if (process.env.NODE_ENV === "development") {
+    console.log("[Gema] Pendaftaran development (tidak disimpan):", payload);
+    return {
+      registrationId: `DEV-GM-${crypto
+        .randomUUID()
+        .replace(/-/g, "")
+        .slice(0, 8)
+        .toUpperCase()}`,
+    };
+  }
+
   const response = await fetch("/api/registrations", {
     method: "POST",
     headers: { "content-type": "application/json" },

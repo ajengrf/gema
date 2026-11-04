@@ -16,7 +16,10 @@ function doPost(event) {
     const lock = LockService.getScriptLock();
     lock.waitLock(10000);
 
-    const registrationId = `GM-${Utilities.getUuid().toUpperCase()}`;
+    const registrationId = `GM-${Utilities.getUuid()
+      .replace(/-/g, "")
+      .slice(0, 8)
+      .toUpperCase()}`;
     try {
       const sheet = getRegistrationSheet(spreadsheetId, payload.type);
       const headers = sheet

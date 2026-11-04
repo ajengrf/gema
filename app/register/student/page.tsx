@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { siteConfig } from "@/site.config";
 import { submitRegistration } from "@/lib/registrations";
+import { saveRegistrationConfirmation } from "@/lib/registration-confirmation";
 
 const subjectOptionsByLevel = {
   SMP: ["Matematika", "IPA", "IPS", "Bahasa Inggris", "Lainnya"],
@@ -242,9 +243,12 @@ export default function StudentRegisterPage() {
         ...details,
         website,
       });
-      router.push(
-        `/confirmation?type=student&id=${encodeURIComponent(registrationId)}`,
-      );
+      saveRegistrationConfirmation({
+        fullName: details.fullName,
+        registrationId,
+        type: "student",
+      });
+      router.push("/confirmation");
     } catch (error) {
       setSubmitError(
         error instanceof Error ? error.message : "Pendaftaran gagal dikirim.",
